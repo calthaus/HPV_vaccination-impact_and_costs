@@ -18,8 +18,8 @@ dirl <- ""
 #define date of betaparams to be used 
 # dobeta <- "2018_07_16"
 # dopr3c <- "2018_07_17"
-dobeta <- "2018_07_18"
-dopr3c <- "2018_07_18"
+dobeta <- "2018_07_23"
+dopr3c <- "2018_07_23"
 
 
 ######## make initial params for specific type

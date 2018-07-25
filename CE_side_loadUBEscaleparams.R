@@ -21,8 +21,8 @@ y <-  which(dis_outcome=="cervix")
 vbeta <- seq(0.55,1,0.05) #has to be the same as the one used in the UBE script
 
 #directory where the results from UBE file are saved ############# CHOOSE DIRECTORY TO LOAD DATA FROM; CHANGES FOR BETA OR PR3C
-loaddir <- "param_scaling/beta/m3/p"
-loaddir <- "param_scaling/pr3c/m6/p"
+loaddir <- "param_scaling/beta/m5/p"
+loaddir <- "param_scaling/pr3c/m8/p"
 
 #directory where to save optimised params
 svdir <- "tab_params/"

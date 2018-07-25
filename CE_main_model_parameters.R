@@ -241,6 +241,10 @@ s <- array(0, dim=c(length(sex), length(agegroups), length(dis_outcome) ),
 #screening only occurs for cervix outcomes and only in women # for the first age group there was no indication, I took half of the second age group
 s[1,,1] <-  c( s1[1,6] /2 , s1[1:5,6] )
 
+#transform proportions in rate.
+s[1,,1] <- (-log(1-s[1,,1]) )/1
+
+
 #previously used screening rates:
 # s[1,,1] <- c(0.28,0.56,0.66,0.68,0.61,0.38)
 # s[1,,1] <- c(0.2780318, 0.5560636, 0.6612978, 0.6818641, 0.6084159, 0.3820578)
@@ -255,7 +259,7 @@ sspec <- 0.969 #from Bigras 2005, CI 96.6-97.2
 
 ################################################### PER DISEASE STAGE SPECIFIC (for cervical cancer)
 
-#stage specific probablity of diagn.(?)
+#stage specific probablity of diagn.(?), from Campos (2014) Web appendix, table 1
 dstages <- c("cin2", "cin3", "local", "regional", "distant")
 dstages[3:5]
 
@@ -264,7 +268,7 @@ z <- array(0, dim=c(length(dstages[3:5]), length(dis_outcome) ),
 z[,1:5] <- c(0.2106379, 0.9160948,2.302646)
 
 
-#stage specific probability of cure with treatement, from Durham who cites: Elbasha EH et al. 2007 #----------------------------------CHECK
+#stage specific probability of cure with treatement, from Durham who cites: Elbasha EH et al. 2007 #----------------------------------CHECK value from modelling paper..
 pi <- array(0, dim=c(length(dstages[3:5]), length(dis_outcome) ), 
             dimnames = list( dstages[3:5],  dis_outcome) )
 pi[,1:5] <-  c(0.92, 0.55, 0.17)
@@ -338,9 +342,20 @@ col_nam <- compnamef(comp)
 
 
 #age group weights according to the European Standard population (ESP 2013)
-agw <- c( sum(0.01,0.04,0.055,0.055),0.055,0.06,0.06, sum(0.065,0.07), sum(0.07,0.07,0.07,0.065,0.06), sum(0.055,0.05,0.04,0.025), 0.025 )
+#agw <- c( sum(0.01,0.04,0.055,0.055),0.055,0.06,0.06, sum(0.065,0.07), sum(0.07,0.07,0.07,0.065,0.06), sum(0.055,0.05,0.04,0.025), 0.025 )
+#names(agw) <- c("0:14",agegroups, "+85")
+
+# from http://ec.europa.eu/eurostat/documents/3859598/5926869/KS-RA-13-028-EN.PDF/e713fa79-1add-44e8-b23d-5e8fa09b3f8f p.31, projections 2011-2020
+nav <- c(1078.641, 4373.749, 5410.346, 5252.859,  5410.049, 6066.914,  6711.973,  7023.97, 7135.495, 
+         7126.248, 7087.804, 6938.434, 6595.514, 6095.677, 5307.002, 4328.78, 3419.627, 2492.941,1452.548,555.307,136.12 )
+names(nav) <- c("0", "1-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54",
+                 "55-59", "60-64","65-69", "70-74","75-79", "80-84" , "85-89","90-94", "95+")
+
+nav /sum(nav)
+
+#make a vector with age group weights with our age groups and the younger and older pop
+agw <- c( sum(nav[1:4]) ,nav[5:7], sum(nav[8:9]), sum(nav[10:14]), sum(nav[15:18]), sum(nav[19:21]) )
 names(agw) <- c("0:14",agegroups, "+85")
-
-
+agw <- agw/sum(agw)
 
 

@@ -9,7 +9,7 @@
 #directories
 dirl <- "tab_params/" #where to load parameter data from
 plotdir <- "plots/" #where to save plots
-loaddir <- "outp/m11/p" #where the UBE data was stored
+loaddir <- "outp/m13/p" #where the UBE data was stored
 
 ### Load optimbeta from ubelix
 source("CE_main_model_parameters.R")
@@ -89,7 +89,7 @@ totmodinc[1,1,] * 1e5
 #for the vaccination cohort life time (15-84y.o) i.e 69 years
 endt <- 102
 startt <-2
-diffcosts9v <- seq(from=200, to=500, by=10)
+diffcosts9v <- seq(from=200, to=500, by=20)
 icerpricevar <- array(0, dim=c(length(diffcosts9v), length(vaccstrat), 2),  dimnames = list(diffcosts9v, vaccstrat , c("compared_to_baseline", "compared_to_novacc") )  )
 
 
@@ -115,6 +115,7 @@ tempd[10,,]
 
 icerpricevar[,,1]-0
 
+icerpricevar[,1,1] <- 0
 
 col3 <- colorRampPalette(c("darkblue", "lightblue"))(3)
 col4 <- colorRampPalette(c("darkgreen", "lightgreen"))(3)
@@ -137,7 +138,7 @@ for(j in 1:2){
   for(i in 1:length(vaccstrat)){
     lines(diffcosts9v, icerpricevar[,i,j], col=col1[i], lwd=2)
   }
-  abline(h=0, lty=2, lwd=0.5)
+  # abline(h=0, lty=1, lwd=2, col=col1[1])
   if(j==1){
     legend(200, max(icerpricevar, na.rm=TRUE) , legend=c( paste("V4v:", (diffv*100), "%", c("(baseline)","", ""), sep="") ,
                                                           paste("V9v:", (diffv*100), "%", sep="") ), 
@@ -168,7 +169,7 @@ par(mar = c(5, 2, 1, 1)) # make the plots be closer together
 
 par(mar=c(5,5,1,2))
 ########################### Cervical cancer
-plot(NA, xlim=c(0,plott ), ylim=c(min(cqoutcome[,3,])*modpop ,max(cqoutcome[,3,]*modpop)), 
+plot(NA, xlim=c(0,plott ), ylim=c(0,max(cqoutcome[,3,]*modpop)+0.05), 
      xlab= "",
      ylab="",
      cex.lab=2, frame.plot=FALSE, main="cervical cancer")
@@ -183,7 +184,7 @@ legend(35, max(cqoutcome[,3,]*modpop, na.rm=TRUE) , legend=c( paste("V4v:", (dif
 
 ################################ CIN
 # par(mar=c(5,7,7,2))
-plot(NA, xlim=c(0,plott ), ylim=c(min(cqoutcome[,2,])*modpop ,max(cqoutcome[,2,]*modpop)), 
+plot(NA, xlim=c(0,plott ), ylim=c(0,max(cqoutcome[,2,]*modpop)+0.1), 
      xlab= "",
      ylab="",
      cex.lab=2, frame.plot=FALSE, main="CIN2 and CIN3")
@@ -231,6 +232,8 @@ for(i in 1:length(vaccstrat)){
 # modpop <- popmod/2  #population modelled here is Swiss women pop
 plott <- 100
 
+rf <- c(1)
+
 pdf(paste(plotdir, "totcostsandqaly", Sys.Date(), ".pdf", sep=""), width=12, height=6)
 par(mfrow=c(1,2))
 par(oma = c(3, 3, 2, 1)) # make room (i.e. the 4's) for the overall x and y axis titles
@@ -238,7 +241,7 @@ par(mar = c(5, 2, 1, 1)) # make the plots be closer together
 
 par(mar=c(5,5,3,2))
 ########################### Total costs
-plot(NA, xlim=c(0,plott ), ylim=c(min(cqoutcome[,8,])*modpop ,max(cqoutcome[,8,]*modpop)), 
+plot(NA, xlim=c(0,plott ), ylim=c(floor( min(cqoutcome[,8,])*modpop/rf)*rf , round(max(cqoutcome[,8,]*modpop)/rf)*rf ), 
      xlab= "",
      ylab="CHF (mio.)",
      cex.lab=2, frame.plot=FALSE, main="total costs")
@@ -247,9 +250,7 @@ for(i in 1:length(vaccstrat)){
   lines(time, cqoutcome[,8,i]*modpop, col=col1[i], lwd=2)
 }
 
-legend(30, max(cqoutcome[,8,]*modpop, na.rm=TRUE) , legend=c( paste("V4v:", (diffv*100), "%", c("(baseline)","", ""), sep="") ,
-                                                              paste("V9v:", (diffv*100), "%", sep="") ), 
-       pch=16, col=col1, lwd=2, bty="n", title="Vaccine type and coverage" )
+
 
 ################################ Total QALYS
 # QALY gained with vaccination
@@ -267,6 +268,9 @@ for(i in 1:length(vaccstrat)){
   lines(time, qalydiff[,i], col=col1[i], lwd=2)
 }
 
+legend(5, max(qalydiff, na.rm=TRUE) , legend=c( paste("V4v:", (diffv*100), "%", c("(baseline)","", ""), sep="") ,
+                                                              paste("V9v:", (diffv*100), "%", sep="") ), 
+       pch=16, col=col1, lwd=2, bty="n", title="Vaccine type and coverage" )
 ################## Overall x and y labels
 mtext('years after vaccination onset', side = 1, outer = TRUE, line = -1, cex=1.5)
 # mtext('costs in mio. CHF', side = 2, outer = TRUE, line = -1, cex=1.5)

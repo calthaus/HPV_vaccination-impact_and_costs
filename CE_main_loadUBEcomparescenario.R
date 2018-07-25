@@ -9,7 +9,7 @@
 #directories
 dirl <- "tab_params/" #where to load parameter data from
 plotdir <- "plots/" #where to save plots
-loaddir <- "outp/m11/p" #where the UBE data was stored
+loaddir <- "outp/m13/p" #where the UBE data was stored
 
 
 ### Load optimbeta from ubelix
@@ -71,16 +71,17 @@ denom <- popmod*1e6*sr
 
 pdf(paste(plotdir, "CCincidence_", denom,"_", Sys.Date(), ".pdf", sep=""), width=8, height=6)
 par(mar=c(5,7,7,2))
+rf <- 50
 
-plot(NA, xlim=c(stt,plott ), ylim=c(min(totmodinc[,,1]*denom),max(totmodinc[,,1]*denom)), 
+plot(NA, xlim=c(stt,plott ), ylim=c(0,round(max(totmodinc[,,1]*denom)/rf)*rf ), 
      xlab= "years",
-     ylab="HPV related \ncervical cancer incidence",
+     ylab="incident \ncervical cancer cases",
      cex.lab=2, frame.plot=FALSE)
 
 for(i in 1:length(vaccstrat)){
   lines(time, totmodinc[,i,]*denom, col=col1[i], lwd=2) }
 
-legend(50,max(totmodinc[,,1]*denom), legend=c( paste("V4v:", (diffv*100), "%", sep="") , paste("V9v:", (diffv*100), "%", sep="") ), 
+legend(40,max(totmodinc[,,1]*denom), legend=c( paste("V4v:", (diffv*100), "%", sep="") , paste("V9v:", (diffv*100), "%", sep="") ), 
        pch=16, col=col1, lwd=2, bty="n", title="Vaccine type and coverage" )
 
 dev.off()
@@ -298,7 +299,9 @@ dev.off()
 
 ########### -----------------------------------------    plot cancer incidences and hpv prev
 prev_pt_2024 <- nGUAN_typerationormal * 0.2435849
+
 pdf(paste(plotdir, "hpvprevandccinc_vi3", Sys.Date(), ".pdf", sep=""), width=6, height=6)
+
 par(mfrow=c(3,1))
 par(oma = c(3, 2, 2, 1)) # make room (i.e. the 4's) for the overall x and y axis titles
 par(mar = c(5, 2, 1, 1)) # make the plots be closer together
@@ -306,38 +309,40 @@ par(mar = c(5, 2, 1, 1)) # make the plots be closer together
 par(mar=c(5,5,3,2))
 plot(NA, xlim=c(1,11 ), ylim=c(0,0.06) , 
      xlab= "",
-     ylab="",
-     cex.lab=2, frame.plot=FALSE, xaxt="n", main="prevalence in women (20-24 y.o) with normal cytology\n(fitted)")
+     ylab="prevalence",
+     cex.lab=1, frame.plot=FALSE, xaxt="n", main="prevalence in women (20-24 y.o) with normal cytology\n(fitted)")
 axis(side=1, at=1:11, labels=FALSE)
-text(seq(1, 11, by=1), par("usr")[3] - 0.08, labels = hpvtype[-1*c(11,12)], srt = 45, pos = 1, xpd = TRUE)
+text(seq(1, 11, by=1), par("usr")[3] - 0.005, labels = hpvtype[-1*c(11,12)], srt = 45, pos = 1, xpd = TRUE)
 points(1:11 ,i_prevpt[-1*c(11,12)], pch=17)
 points(1:11 ,prev_pt_2024[-1*c(11,12)], col="lightgreen", pch=17)
+lines(1:11 ,prev_pt_2024[-1*c(11,12)], col="lightgreen", pch=17, lwd=3)
 lines(1:11 ,i_prevpt[-1*c(11,12)], pch=17)
-lines(1:11 ,prev_pt_2024[-1*c(11,12)], col="lightgreen", pch=17)
+
 legend(9,0.06, legend=c( "model based", "Guan (2012)"), 
-       pch=17, col=c("black", "lightgreen"), lwd=1, cex=0.9, bty="n" )
+       pch=c(NA,17) , col=c("black", "lightgreen"), lwd=1, cex=0.9, bty="n" )
 ################################### Third Cervical Cancer 
 par(mar=c(5,5,3,2))
 plot(NA, xlim=c(1,11 ), ylim=c(0,5) , 
      xlab= "",
-     ylab="",
-     cex.lab=2, frame.plot=FALSE, xaxt="n", main="cevical cancer incidence per 10,000 women \n(fitted)")
+     ylab="incidence",
+     cex.lab=1, frame.plot=FALSE, xaxt="n", main="cevical cancer incidence per 10,000 women \n(fitted)")
 axis(side=1, at=1:11, labels=FALSE)
-text(seq(1, 11, by=1), par("usr")[3] - 0.08, labels = hpvtype[-1*c(11,12)], srt = 45, pos = 1, xpd = TRUE)
+text(seq(1, 11, by=1), par("usr")[3] - 0.5, labels = hpvtype[-1*c(11,12)], srt = 45, pos = 1, xpd = TRUE)
 points( (1:11) ,cincpt[-1*c(11,12)], pch=19)
 points((1:11) ,ccpt$`ccpt1[, 2]`[-1*c(11,12)], col="lightblue", pch=19)
+
+lines((1:11) ,ccpt$`ccpt1[, 2]`[-1*c(11,12)], col="lightblue", pch=19, lwd=3)
 lines( (1:11) ,cincpt[-1*c(11,12)], pch=19)
-lines((1:11) ,ccpt$`ccpt1[, 2]`[-1*c(11,12)], col="lightblue", pch=19)
-legend(9,5, legend=c( "model based", "Clifford (2003)"), 
-       pch=19, col=c("black", "lightblue"), lwd=1, cex=0.9, bty="n" )
+legend(8,5, legend=c( "model based", "de Sanjosé (2010)"), 
+       pch=c(NA,19), col=c("black", "lightblue"), lwd=1, cex=0.9, bty="n" )
 ################## Overall x and y labels
 
 ################################### Second CIN3 type ratio 
 par(mar=c(5,5,3,2))
 plot(NA, xlim=c(1,11 ), ylim=c(0,0.7) , 
      xlab= "",
-     ylab="",
-     cex.lab=2, frame.plot=FALSE, xaxt="n", main="Type attributable ratio for CIN3")
+     ylab="Type-attributable ratio",
+     cex.lab=1, frame.plot=FALSE, xaxt="n", main="Type attributable ratio for CIN3")
 axis(side=1, at=1:11, labels=FALSE)
 text(seq(1, 11, by=1), par("usr")[3] - 0.08, labels = hpvtype[-1*c(11,12)], srt = 45, pos = 1, xpd = TRUE)
 points((1:11) ,cin3_typratio[-1*c(11,12)], pch=15)
@@ -350,7 +355,7 @@ legend(9,0.8, legend=c( "model based", "CIN3+plus study", "Guan (2012)"),
        pch=15, col=c("black", "orange", "red"), lwd=1, cex=0.9, bty="n" )
 
 mtext('HPV types', side = 1, outer = TRUE, line = -1)
-mtext('Type-attributable ratio', side = 2, outer = TRUE, line = -1)
+# mtext('Type-attributable ratio', side = 2, outer = TRUE, line = -1)
 
 dev.off()
 
@@ -389,9 +394,10 @@ pdf(paste(plotdir, "MortalityandCINtreatements", Sys.Date(), ".pdf", sep=""), wi
 par(mfrow=c(1,2))
 par(oma = c(3, 3, 2, 1)) # make room (i.e. the 4's) for the overall x and y axis titles
 par(mar = c(5, 2, 1, 1)) # make the plots be closer together
+rf <- c(1000,0, 10)
 
 for(j in c(1,3) ){
-  plot(NA, xlim=c(0,length(1:plott) ), ylim=c(min(totcasesinSwitz[,,j]),max(totcasesinSwitz[,,j])) , 
+  plot(NA, xlim=c(0,length(1:plott) ), ylim=c(0,round(max(totcasesinSwitz[,,j])/rf[j] )*rf[j] ) , 
        ylab= "",
        xlab="",
        frame.plot=FALSE,  main=outcomoi[j])
@@ -399,8 +405,8 @@ for(j in c(1,3) ){
   for(i in 1:length(vaccstrat)){
     lines(time, totcasesinSwitz[,i,j], col=col1[i], lwd=2)
   }
-  if(j==2){
-    legend(60, max(totcasesinSwitz[,,j], na.rm=TRUE) , legend=c( paste("V4v:", (diffv*100), "%", c("","", ""), sep="") ,
+  if(j==3){
+    legend(35, max(totcasesinSwitz[,,j], na.rm=TRUE) , legend=c( paste("V4v:", (diffv*100), "%", c("","", ""), sep="") ,
                                                                  paste("V9v:", (diffv*100), "%", sep="") ), 
            pch=16, col=col1, lwd=2, bty="n", title="Vaccine type \nand coverage" )
   }

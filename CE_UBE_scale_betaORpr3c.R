@@ -15,7 +15,7 @@ i=as.numeric(unlist(args))
 wt <- c(1:13)[i]
 
 hpvtype <- c("hpv16", "hpv18", "hpv31", "hpv33", "hpv35", "hpv39", "hpv45",
-             "hpv51", "hpv52", "hpv58", "hpv6", "hpv11", "other_HR")
+             "hpv51", "hpv52", "hpv58", "hpv6", "hpv11", "otherHR")
 
 print(hpvtype[wt])
 
@@ -24,8 +24,8 @@ print(hpvtype[wt])
 dirl <- ""
 
 #define date of betaparams to be used 
-dobeta <- "2018_07_18"
-dopr3c <- "2018_07_18"
+dobeta <- "2018_07_23"
+dopr3c <- "2018_07_23"
 
 ################################ Choose which parameter to scale first (beta or pr3c). First the beta has to be scaled on the HPV prev per type, then 
 # the pr3c on the cervical cancer incidence per type. Thus the scaling or optimisation of the two parameters has to be done in two steps.
@@ -40,14 +40,16 @@ vbeta <- seq(0.55,1,0.05) #first step: says the range in which beta can be
 
 vptprf <- function(wt){
   if(wt==which(hpvtype=="hpv16") ){
-  vpr3c <- seq(0.028,0.032,0.0005)
+  vpr3c <- seq(0.033,0.038,0.001)
 } else if(wt==which(hpvtype=="hpv18")  ){
-  vpr3c <- seq(0.02,0.04,0.005)
+  vpr3c <- seq(0.04,0.044,0.001)
+} else if(wt==which(hpvtype=="otherHR")  ){
+  vpr3c <- seq(0.03,0.035,0.001)
 } else if(wt==which(hpvtype=="hpv45")  ){
-  vpr3c <- seq(0.05,0.12,0.01)
+  vpr3c <- seq(0.06,0.065,0.001)
 } else if(wt==which(hpvtype=="hpv35")  ){
-  vpr3c <- seq(0.045,0.055,0.001)
-}else {vpr3c <- seq(0.0,0.03,0.005)}
+  vpr3c <- seq(0.055,0.060,0.001)
+}else {vpr3c <- seq(0.007,0.023,0.002)}
   return(vpr3c)
 }
 
@@ -61,20 +63,15 @@ vptprf <- function(wt){
 #   return(vpr3c)
 # }
 
+# vptprf <- function(wt){
+#   if(wt==which(hpvtype=="hpv35") |wt==which(hpvtype=="hpv45") |wt==which(hpvtype=="hpv16")  ){
+#     vpr3c <- seq(0.02,0.1,0.005)
+#    }else {vpr3c <- seq(0.0,0.05,0.005) }
+#   return(vpr3c)
+# }
 
 vpr3c <- vptprf(wt)
-
-
-
-# if(wt==which(hpvtype=="hpv16") ){
-#   vpr3c <- seq(0.02,0.03,0.001)
-# } else if(wt==which(hpvtype=="hpv18")  ){
-#   vpr3c <- seq(0.08,0.09,0.001)
-#   }else if(wt==which(hpvtype=="hpv31" ) | wt==which(hpvtype=="hpv33") | wt==which(hpvtype=="hpv45")  ){
-#     vpr3c <- seq(0.005,0.01,0.001)
-# }else {vpr3c <- seq(0.00,0.005,0.001)}
-
-
+# vpr3c <- seq(0.0,0.05,0.005)
 
 
 ## requires paramters 
@@ -188,18 +185,18 @@ print(lr)
 # tosave <- list(inc, lr,lincorr, minbeta, betadp )
 #for HPV-16, it also saves the parameter tables which were used to retrieve optimised parameters
 
-savingf <- function(wt){
-  if(wt==1) {
-    source("CE_main_model_costsparameters.R")
-    source("CE_side_loadLateXtable.R")
-    tosave <- list(inc, lr,lincorr, minbeta, betadp,tab_generalparams, tab_hpvtparams,tab_hpvdparams, tab_economicev, tab_cinc )
-    return(save(tosave, file="p.RData"))
-  }
-  else
-    tosave <- list(inc, lr,lincorr, minbeta, betadp )
-  return(save(tosave, file="p.RData"))
-}
-savingf(wt)
+# savingf <- function(wt){
+#   if(wt==1) {
+#     source("CE_main_model_costsparameters.R")
+#     source("CE_side_loadLateXtable.R")
+#     tosave <- list(inc, lr,lincorr, minbeta, betadp,tab_generalparams, tab_hpvtparams,tab_hpvdparams, tab_economicev, tab_cinc )
+#     return(save(tosave, file="p.RData"))
+#   }
+#   else
+#     tosave <- list(inc, lr,lincorr, minbeta, betadp )
+#   return(save(tosave, file="p.RData"))
+# }
+# savingf(wt)
 
-# tosave <- list(inc, lr,lincorr, minbeta, betadp )
-# save(tosave, file="p.RData")
+tosave <- list(inc, lr,lincorr, minbeta, betadp )
+save(tosave, file="p.RData")
